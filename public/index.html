@@ -808,6 +808,7 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
 .countdown-emoji { font-size:1.1rem; }
 .countdown-num { font-size:1.3rem; font-weight:900; color:var(--ocean-light); line-height:1; }
 .countdown-label { font-size:0.85rem; font-weight:600; color:var(--text-soft); }
+.clock-row { display:flex; flex-direction:row-reverse; gap:0.45rem; width:100%; justify-content:center; }
 .countdown-banner .clock-box { flex:1; max-width:80px; text-align:center; }
 .countdown-banner .clock-num { font-size:1.5rem; font-weight:900; color:var(--ocean-light); line-height:1;
   font-variant-numeric:tabular-nums; }
@@ -1084,11 +1085,12 @@ function renderCountdown(startStr, startDepStr, endStr) {
       const hours = Math.floor((diff % msDay) / 3600000);
       const minutes = Math.floor((diff % 3600000) / 60000);
       const seconds = Math.floor((diff % 60000) / 1000);
-      el.innerHTML = `
+      el.innerHTML = `<div class="clock-row">
         <div class="clock-box"><div class="clock-num">${days}</div><div class="clock-lbl">ימים</div></div>
         <div class="clock-box"><div class="clock-num">${pad(hours)}</div><div class="clock-lbl">שעות</div></div>
         <div class="clock-box"><div class="clock-num">${pad(minutes)}</div><div class="clock-lbl">דקות</div></div>
-        <div class="clock-box"><div class="clock-num">${pad(seconds)}</div><div class="clock-lbl">שניות</div></div>`;
+        <div class="clock-box"><div class="clock-num">${pad(seconds)}</div><div class="clock-lbl">שניות</div></div>
+      </div>`;
     } else {
       const today = new Date(); today.setHours(0, 0, 0, 0);
       let emoji, num, label;
