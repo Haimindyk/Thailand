@@ -803,8 +803,13 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
 .connection::before,.connection::after { content:''; flex:1; height:1px; background:var(--divider); max-width:80px; }
 
 /* COUNTDOWN */
-.countdown-banner { margin-top:1.5rem; padding:0.85rem 1rem; text-align:center; font-size:0.95rem; font-weight:700;
-  color:var(--sand); background:var(--ocean); border-radius:14px; letter-spacing:0.5px; }
+.countdown-banner { margin-top:1.5rem; padding:1.1rem 1.25rem; display:flex; align-items:center; gap:0.9rem;
+  background:linear-gradient(135deg,var(--ocean),var(--ocean-light)); border-radius:16px;
+  box-shadow:0 8px 24px rgba(26,107,124,0.35); }
+.countdown-emoji { font-size:1.9rem; line-height:1; flex-shrink:0; }
+.countdown-text { display:flex; flex-direction:column; gap:0.15rem; text-align:right; }
+.countdown-num { font-size:1.6rem; font-weight:900; color:var(--sand); line-height:1; }
+.countdown-label { font-size:0.78rem; font-weight:600; color:var(--sand); opacity:0.85; letter-spacing:0.5px; }
 
 /* SUMMARY */
 .summary-bar { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--divider);
@@ -1061,16 +1066,19 @@ function renderCountdown(startStr, endStr) {
   const start = parseDDMMYYYY(startStr); start.setHours(0, 0, 0, 0);
   const end = parseDDMMYYYY(endStr); end.setHours(0, 0, 0, 0);
 
+  let emoji, num, label;
   if (today < start) {
     const days = Math.round((start - today) / msDay);
-    el.textContent = `🗓️ עוד ${days} ${days === 1 ? 'יום' : 'ימים'} לטיול!`;
+    emoji = '🗓️'; num = days; label = days === 1 ? 'יום נשאר לטיול' : 'ימים נשארו לטיול';
   } else if (today <= end) {
     const dayNum = Math.round((today - start) / msDay) + 1;
     const totalDays = Math.round((end - start) / msDay) + 1;
-    el.textContent = `🏝️ יום ${dayNum} מתוך ${totalDays} בטיול!`;
+    emoji = '🏝️'; num = dayNum; label = `מתוך ${totalDays} ימי הטיול`;
   } else {
-    el.textContent = `✅ הטיול הסתיים — מקווים שנהניתם!`;
+    emoji = '✅'; num = ''; label = 'הטיול הסתיים — מקווים שנהניתם!';
   }
+  el.innerHTML = `<div class="countdown-emoji">${emoji}</div>
+    <div class="countdown-text">${num !== '' ? `<div class="countdown-num">${num}</div>` : ''}<div class="countdown-label">${label}</div></div>`;
 }
 
 // ─── VIEW TAB ─────────────────────────────────────────────────────
