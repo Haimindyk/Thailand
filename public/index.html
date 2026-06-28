@@ -808,6 +808,10 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
 .countdown-emoji { font-size:1.1rem; }
 .countdown-num { font-size:1.3rem; font-weight:900; color:var(--ocean-light); line-height:1; }
 .countdown-label { font-size:0.85rem; font-weight:600; color:var(--text-soft); }
+.countdown-banner .clock-box { flex:1; max-width:80px; text-align:center; }
+.countdown-banner .clock-num { font-size:1.5rem; font-weight:900; color:var(--ocean-light); line-height:1;
+  font-variant-numeric:tabular-nums; }
+.countdown-banner .clock-lbl { font-size:0.68rem; font-weight:600; color:var(--text-soft); margin-top:0.2rem; letter-spacing:0.5px; }
 
 /* SUMMARY */
 .summary-bar { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--divider);
@@ -1051,31 +1055,59 @@ function hc(h) {
 }
 
 // ─── COUNTDOWN ──────────────────────────────────────────────────────
-function parseDDMMYYYY(str) {
+function parseDDMMYYYY(str, timeStr) {
   const [d, m, y] = str.split('/').map(Number);
-  return new Date(y, m - 1, d);
+  let h = 0, min = 0;
+  if (timeStr) [h, min] = timeStr.split(':').map(Number);
+  return new Date(y, m - 1, d, h, min);
 }
 
-function renderCountdown(startStr, endStr) {
+let countdownInterval = null;
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function renderCountdown(startStr, startDepStr, endStr) {
   const el = document.getElementById('countdownBanner');
   if (!el) return;
-  const msDay = 86400000;
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const start = parseDDMMYYYY(startStr); start.setHours(0, 0, 0, 0);
-  const end = parseDDMMYYYY(endStr); end.setHours(0, 0, 0, 0);
+  if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
 
-  let emoji, num, label;
-  if (today < start) {
-    const days = Math.round((start - today) / msDay);
-    emoji = '🗓️'; num = days; label = days === 1 ? 'יום נשאר לטיול' : 'ימים נשארו לטיול';
-  } else if (today <= end) {
-    const dayNum = Math.round((today - start) / msDay) + 1;
-    const totalDays = Math.round((end - start) / msDay) + 1;
-    emoji = '🏝️'; num = dayNum; label = `מתוך ${totalDays} ימי הטיול`;
-  } else {
-    emoji = '✅'; num = ''; label = 'הטיול הסתיים — מקווים שנהניתם!';
+  const msDay = 86400000;
+  const start = parseDDMMYYYY(startStr, startDepStr);
+  const end = parseDDMMYYYY(endStr); end.setHours(0, 0, 0, 0);
+  const dayOfStart = parseDDMMYYYY(startStr); dayOfStart.setHours(0, 0, 0, 0);
+
+  function tick() {
+    const now = new Date();
+    if (now < start) {
+      const diff = start - now;
+      const days = Math.floor(diff / msDay);
+      const hours = Math.floor((diff % msDay) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      el.innerHTML = `
+        <div class="clock-box"><div class="clock-num">${days}</div><div class="clock-lbl">ימים</div></div>
+        <div class="clock-box"><div class="clock-num">${pad(hours)}</div><div class="clock-lbl">שעות</div></div>
+        <div class="clock-box"><div class="clock-num">${pad(minutes)}</div><div class="clock-lbl">דקות</div></div>
+        <div class="clock-box"><div class="clock-num">${pad(seconds)}</div><div class="clock-lbl">שניות</div></div>`;
+    } else {
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      let emoji, num, label;
+      if (today <= end) {
+        const dayNum = Math.round((today - dayOfStart) / msDay) + 1;
+        const totalDays = Math.round((end - dayOfStart) / msDay) + 1;
+        emoji = '🏝️'; num = dayNum; label = `מתוך ${totalDays} ימי הטיול`;
+      } else {
+        emoji = '✅'; num = ''; label = 'הטיול הסתיים — מקווים שנהניתם!';
+      }
+      el.innerHTML = `<span class="countdown-emoji">${emoji}</span>${num !== '' ? `<span class="countdown-num">${num}</span>` : ''}<span class="countdown-label">${label}</span>`;
+      if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+    }
   }
-  el.innerHTML = `<span class="countdown-emoji">${emoji}</span>${num !== '' ? `<span class="countdown-num">${num}</span>` : ''}<span class="countdown-label">${label}</span>`;
+
+  tick();
+  if (new Date() < start) {
+    countdownInterval = setInterval(tick, 1000);
+  }
 }
 
 // ─── VIEW TAB ─────────────────────────────────────────────────────
@@ -1088,7 +1120,7 @@ function renderView() {
   // compute date range for hero
   if(out.length && ret.length) {
     document.getElementById('heroDateRange').textContent = out[0].date.slice(0,5).replace('/','/') + ' — ' + ret[ret.length-1].arrDate.slice(0,5);
-    renderCountdown(out[0].date, ret[ret.length-1].arrDate);
+    renderCountdown(out[0].date, out[0].dep, ret[ret.length-1].arrDate);
   }
 
   // summary
