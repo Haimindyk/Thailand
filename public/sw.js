@@ -1,5 +1,5 @@
 // Service worker — caches everything for full offline use
-const CACHE_NAME = 'thailand-2027-v1';
+const CACHE_NAME = 'thailand-2027-v2';
 const ASSETS = [
   'index.html',
   'manifest.json',
@@ -36,6 +36,13 @@ self.addEventListener('activate', function(event) {
 
 // Fetch: cache-first, fall back to network
 self.addEventListener('fetch', function(event) {
+  // Never cache the shared-data API — always hit the network so edits
+  // made on other devices show up.
+  if (new URL(event.request.url).pathname.startsWith('/api/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(function(cached) {
       if (cached) return cached;
