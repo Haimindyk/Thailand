@@ -742,9 +742,14 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
 .hero-title { font-size:clamp(2.6rem,9.5vw,4.8rem); font-weight:900; letter-spacing:-2px; line-height:1; }
 .hero-title span { color:var(--sunset); }
 .hero-dates { margin-top:0.8rem; font-size:0.92rem; font-weight:300; color:var(--ocean-light); letter-spacing:3px; text-transform:uppercase; }
-.hero-waves { position:absolute; bottom:0; left:0; right:0; height:65px; overflow:hidden; }
-.hero-waves svg { position:absolute; bottom:0; width:200%; animation:wavemove 10s linear infinite; }
-@keyframes wavemove { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.hero-scene { position:absolute; bottom:0; left:0; right:0; height:130px; overflow:hidden; pointer-events:none; }
+.hero-scene svg { position:absolute; bottom:-1px; left:0; width:100%; height:100%; }
+.hero-sun-glow { animation:sunPulse 5s ease-in-out infinite; }
+@keyframes sunPulse { 0%,100%{opacity:0.55} 50%{opacity:0.9} }
+.hero-sun-core { fill:#F4D58D; }
+.hero-mtn-far { fill:rgba(26,107,124,0.45); }
+.hero-mtn-near { fill:#0F2030; }
+.hero-palm path { fill:#081620; }
 
 /* LAYOUT */
 .container { max-width:860px; margin:0 auto; padding:0 1.25rem calc(5.5rem + env(safe-area-inset-bottom)); }
@@ -897,10 +902,34 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
   <span class="hero-emoji">🏝️</span>
   <h1 class="hero-title">תאי<span>לנד</span></h1>
   <p class="hero-dates" id="heroDateRange">טוען...</p>
-  <div class="hero-waves">
-    <svg viewBox="0 0 2400 80" preserveAspectRatio="none" style="height:80px;">
-      <path d="M0,40 C200,70 400,10 600,40 C800,70 1000,10 1200,40 C1400,70 1600,10 1800,40 C2000,70 2200,10 2400,40 L2400,80 L0,80 Z" fill="#1A6B7C" opacity="0.6"/>
-      <path d="M0,50 C300,20 600,70 900,40 C1200,10 1500,60 1800,35 C2000,20 2200,55 2400,45 L2400,80 L0,80 Z" fill="#0F2030"/>
+  <div class="hero-scene">
+    <svg viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice">
+      <defs>
+        <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#F2C572"/>
+          <stop offset="100%" stop-color="#E07B3F" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle class="hero-sun-glow" cx="600" cy="150" r="75" fill="url(#sunGrad)"/>
+      <circle class="hero-sun-core" cx="600" cy="150" r="36"/>
+      <path class="hero-mtn-far" d="M0,220 L0,140 L100,90 L220,150 L340,70 L460,140 L600,60 L740,150 L860,80 L1000,150 L1120,90 L1200,140 L1200,220 Z"/>
+      <path class="hero-mtn-near" d="M0,220 L0,170 L150,110 L300,160 L420,100 L560,170 L700,120 L850,175 L1000,115 L1150,165 L1200,140 L1200,220 Z"/>
+      <g class="hero-palm" transform="translate(95,168) scale(0.85)">
+        <path d="M0,0 C-6,18 -3,38 4,58 L12,58 C8,38 9,18 4,0 Z"/>
+        <path d="M4,2 C24,-4 46,-2 64,12 C46,8 26,8 4,2 Z"/>
+        <path d="M4,2 C26,-12 50,-14 70,-4 C48,-4 26,2 4,2 Z"/>
+        <path d="M4,2 C16,-20 36,-32 58,-32 C40,-20 22,-6 4,2 Z"/>
+        <path d="M4,2 C-2,-18 -16,-32 -36,-34 C-22,-18 -10,-6 4,2 Z"/>
+        <path d="M4,2 C-10,-10 -30,-14 -50,-6 C-32,-2 -16,2 4,2 Z"/>
+      </g>
+      <g class="hero-palm" transform="translate(1105,168) scale(-0.85,0.85)">
+        <path d="M0,0 C-6,18 -3,38 4,58 L12,58 C8,38 9,18 4,0 Z"/>
+        <path d="M4,2 C24,-4 46,-2 64,12 C46,8 26,8 4,2 Z"/>
+        <path d="M4,2 C26,-12 50,-14 70,-4 C48,-4 26,2 4,2 Z"/>
+        <path d="M4,2 C16,-20 36,-32 58,-32 C40,-20 22,-6 4,2 Z"/>
+        <path d="M4,2 C-2,-18 -16,-32 -36,-34 C-22,-18 -10,-6 4,2 Z"/>
+        <path d="M4,2 C-10,-10 -30,-14 -50,-6 C-32,-2 -16,2 4,2 Z"/>
+      </g>
     </svg>
   </div>
 </div>
