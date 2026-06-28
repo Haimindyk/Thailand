@@ -1,5 +1,5 @@
 // Service worker — caches everything for full offline use
-const CACHE_NAME = 'thailand-2027-v8';
+const CACHE_NAME = 'thailand-2027-v9';
 const ASSETS = [
   'index.html',
   'manifest.json',
