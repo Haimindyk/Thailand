@@ -754,6 +754,11 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
 /* LAYOUT */
 .container { max-width:860px; margin:0 auto; padding:0 1.25rem 4rem; }
 
+/* FIRST SCREEN — hero+countdown+summary fill the opening viewport so the
+   tabs below never show until the user scrolls */
+.first-screen { min-height:100vh; display:flex; flex-direction:column; }
+.first-screen-body { flex:1; display:flex; flex-direction:column; justify-content:center; padding-bottom:1.5rem; }
+
 /* TABS */
 .tabs { display:flex; gap:0.5rem; margin:2rem 0 1.5rem; background:var(--night-mid); border-radius:12px; padding:0.4rem; }
 .tab { flex:1; padding:0.7rem 1rem; border:none; border-radius:9px; cursor:pointer;
@@ -896,6 +901,7 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
 
 <div class="save-toast" id="toast">✓ נשמר בהצלחה</div>
 
+<div class="first-screen">
 <div class="hero">
   <span class="hero-emoji">🏝️</span>
   <h1 class="hero-title">תאי<span>לנד</span></h1>
@@ -932,7 +938,7 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
   </div>
 </div>
 
-<div class="container">
+<div class="container first-screen-body">
 
   <!-- COUNTDOWN -->
   <div class="countdown-banner" id="countdownBanner"></div>
@@ -943,6 +949,11 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
     <div class="summary-item"><div class="summary-num" id="sumDests">5</div><div class="summary-text">יעדים</div></div>
     <div class="summary-item"><div class="summary-num" id="sumFlights">6</div><div class="summary-text">טיסות</div></div>
   </div>
+
+</div>
+</div>
+
+<div class="container">
 
   <!-- TABS -->
   <div class="tabs">
