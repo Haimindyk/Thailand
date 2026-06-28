@@ -802,6 +802,10 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
   padding:0.3rem 0; color:var(--text-soft); font-size:0.72rem; }
 .connection::before,.connection::after { content:''; flex:1; height:1px; background:var(--divider); max-width:80px; }
 
+/* COUNTDOWN */
+.countdown-banner { margin-top:1.5rem; padding:0.85rem 1rem; text-align:center; font-size:0.95rem; font-weight:700;
+  color:var(--sand); background:var(--ocean); border-radius:14px; letter-spacing:0.5px; }
+
 /* SUMMARY */
 .summary-bar { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--divider);
   border-radius:14px; overflow:hidden; border:1px solid var(--divider); margin-top:2.5rem; margin-bottom:0; }
@@ -892,6 +896,9 @@ body { font-family:'Heebo',sans-serif; background:var(--night); color:var(--sand
 </div>
 
 <div class="container">
+
+  <!-- COUNTDOWN -->
+  <div class="countdown-banner" id="countdownBanner"></div>
 
   <!-- SUMMARY -->
   <div class="summary-bar" id="summaryBar">
@@ -1040,6 +1047,32 @@ function hc(h) {
   </div>`;
 }
 
+// ─── COUNTDOWN ──────────────────────────────────────────────────────
+function parseDDMMYYYY(str) {
+  const [d, m, y] = str.split('/').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function renderCountdown(startStr, endStr) {
+  const el = document.getElementById('countdownBanner');
+  if (!el) return;
+  const msDay = 86400000;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const start = parseDDMMYYYY(startStr); start.setHours(0, 0, 0, 0);
+  const end = parseDDMMYYYY(endStr); end.setHours(0, 0, 0, 0);
+
+  if (today < start) {
+    const days = Math.round((start - today) / msDay);
+    el.textContent = `🗓️ עוד ${days} ${days === 1 ? 'יום' : 'ימים'} לטיול!`;
+  } else if (today <= end) {
+    const dayNum = Math.round((today - start) / msDay) + 1;
+    const totalDays = Math.round((end - start) / msDay) + 1;
+    el.textContent = `🏝️ יום ${dayNum} מתוך ${totalDays} בטיול!`;
+  } else {
+    el.textContent = `✅ הטיול הסתיים — מקווים שנהניתם!`;
+  }
+}
+
 // ─── VIEW TAB ─────────────────────────────────────────────────────
 function renderView() {
   const out = data.flights.filter(f=>f.type==='outbound');
@@ -1050,6 +1083,7 @@ function renderView() {
   // compute date range for hero
   if(out.length && ret.length) {
     document.getElementById('heroDateRange').textContent = out[0].date.slice(0,5).replace('/','/') + ' — ' + ret[ret.length-1].arrDate.slice(0,5);
+    renderCountdown(out[0].date, ret[ret.length-1].arrDate);
   }
 
   // summary
