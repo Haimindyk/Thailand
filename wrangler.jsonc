@@ -1,9 +1,15 @@
 {
-  "name": "thailand-pwa",
+  "name": "thailand",
   "compatibility_date": "2026-06-28",
   "main": "src/index.js",
   "assets": {
     "directory": "./public",
     "binding": "ASSETS"
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "TRIP_DATA",
+      "id": "dfd77d56ed2940348a3b8201949c3b3f"
+    }
+  ]
 }
