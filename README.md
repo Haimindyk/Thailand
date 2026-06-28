@@ -4,21 +4,22 @@
 עובדת **לגמרי offline** — אחרי התקנה ראשונה אין צורך באינטרנט.
 
 ## מה יש בחבילה
-- `index.html` — האפליקציה (כולל מפה מוטמעת, פונט מוטמע — אפס תלות חיצונית)
-- `manifest.json` — הגדרות ההתקנה
-- `sw.js` — Service Worker (אחראי על העבודה ללא אינטרנט)
-- `icon-*.png` / `apple-touch-icon.png` — אייקונים
-- `data.json` — נתוני הברירת מחדל של הטיול (טיסות/מלונות/תשלומים)
-- `functions/api/data.js` — Cloudflare Pages Function שקוראת/כותבת את הנתונים המשותפים ל-KV
+- `public/index.html` — האפליקציה (כולל מפה מוטמעת, פונט מוטמע — אפס תלות חיצונית)
+- `public/manifest.json` — הגדרות ההתקנה
+- `public/sw.js` — Service Worker (אחראי על העבודה ללא אינטרנט)
+- `public/icon-*.png` / `public/apple-touch-icon.png` — אייקונים
+- `public/data.json` — נתוני הברירת מחדל של הטיול (טיסות/מלונות/תשלומים)
+- `src/index.js` — Worker שקורא/כותב את הנתונים המשותפים ל-KV ומגיש את שאר הקבצים מ-`public/`
+- `wrangler.jsonc` — קונפיגורציית הפריסה (entry-point + תיקיית assets)
 
-## פריסה ל-Cloudflare Pages
+## פריסה ל-Cloudflare Workers
 
-הפרויקט מחובר ל-Cloudflare Pages דרך Git (לא צריך להעלות ZIP).
+הפרויקט מחובר ל-Cloudflare Workers דרך Git (לא צריך להעלות ZIP). זהו פרויקט **Worker עם Static Assets** (לא Pages קלאסי), כך שה-build משתמש ב-`wrangler.jsonc` בשורש הריפו: `main: src/index.js` מטפל ב-`/api/data`, וכל בקשה אחרת מוגשת מתיקיית `public/`.
 
 ### הגדרת אחסון משותף (חד פעמי)
-כדי שעריכה של משתמש אחד תופיע לכולם, צריך KV namespace:
-1. ב-Cloudflare Dashboard → **Workers & Pages → KV** → צור namespace בשם `TRIP_DATA`
-2. בפרויקט ה-Pages → **Settings → Functions → KV namespace bindings** → הוסף binding:
+כדי שעריכה של משתמש אחד תופיע לכולם, צריך KV namespace מחובר ל-Worker:
+1. ב-Cloudflare Dashboard → **Storage & Databases → KV** → צור namespace בשם `TRIP_DATA`
+2. בפרויקט ה-Worker → **Settings → Bindings** → הוסף binding מסוג KV namespace:
    - Variable name: `TRIP_DATA`
    - KV namespace: זה שיצרת
 3. בצע Deploy מחדש (Retry deployment) כדי שה-binding יחול
